@@ -4,11 +4,16 @@ Training dynamic [Conformer](https://arxiv.org/abs/2005.08100) models for Automa
 
 **Paper**
 
-Find our original paper on early-exit training, 'Training dynamic models using early exits for automatic speech recognition on resource-constrained devices', on [arXiv](https://arxiv.org/abs/2309.09546).
+This code is based on our paper on early-exit training: 
+George August Wright, Umberto Cappellazzo, Salah Zaiem, Desh Raj, Lucas Ondel Yang, Daniele Falavigna, Mohamed Nabih Ali, Alessio Brutti, "Training Early-Exit Architectures for Automatic Speech Recognition: Fine-Tuning Pre-Trained Models or Training from Scratch",  IEEE ICASSP 2024 workshop Self-supervision in Audio, Speech and Beyond (SASB)
+The paper is also available on arXiv https://arxiv.org/abs/2309.09546.
 
 **Acknowledgements**
 
-Incorporates code from [Transformer PyTorch implementation by Hyunwoong Ko](https://github.com/hyunwoongko/transformer) and [SentencePiece unsupervised tokenizer](https://github.com/google/sentencepiece).
+This repo incorporates code from [Transformer PyTorch implementation by Hyunwoong Ko](https://github.com/hyunwoongko/transformer) and [SentencePiece unsupervised tokenizer](https://github.com/google/sentencepiece).
+This work has been partially funded by:
+- PNRR ICSC National Research Centre for High Performance Computing, Big Data and Quantum Computing (CN00000013)
+- PNRR project FAIR - Future AI Research (PE00000013) under the NRRP MUR program funded by the NextGenerationEU
 
 ### Usage
 
