@@ -18,3 +18,6 @@ trained_model/
 # Misc.
 paper/
 runs/
+
+# Visual Studio Code
+.vscode
