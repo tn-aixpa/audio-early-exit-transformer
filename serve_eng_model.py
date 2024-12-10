@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 import string
 import random
@@ -31,16 +32,14 @@ def evaluate_batch_ctc(args, model, batch, valid_len, inf, vocab):
 def run(args, model, data_loader, inf, vocab):
     result = []
     for batch in data_loader:
-
         valid_len = batch[1]
-
         result.append(evaluate_batch_ctc(args, model, batch,
                             valid_len,  inf, vocab))
 
     return result
 
 
-def init():
+def init(model_name="early-exit-eng-model"):
     args = get_args()
     args.batch_size = 1
     args.n_workers = 1
@@ -49,11 +48,11 @@ def init():
     context['args'] = args
     #setattr(context, "args", args)
 
-    #project = dh.get_or_create_project("demo-early-exit-eng")
-    #model = project.get_model("early-exit-eng-model")
-    #path = model.download()
+    project = dh.get_or_create_project(os.getenv("PROJECT_NAME"))
+    model = project.get_model(model_name)
+    path = model.download(destination="trained_model", overwrite=True)
 
-    path = "trained_model/mod032-transformer"
+    #path = "trained_model/mod032-transformer"
     model = load_model(path, args)
     context['model'] = model
     #setattr(context, "model", model)
@@ -64,7 +63,6 @@ def init():
     #setattr(context, "vocab", vocab)
 
     print(f"app context:{len(context)}")
-
 
 
 def load_model(model_path, args):
@@ -115,6 +113,7 @@ def serve(path):
     else:
         return ""
 
+
 def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -149,7 +148,26 @@ def simple_app(environ, start_response):
     return content
 
 
-init()
-with make_server('', 8051, simple_app) as httpd:
-    print("Serving on port 8051...")
-    httpd.serve_forever()
+def main():
+    args = sys.argv[1:] 
+    if len(args) > 0:
+        init(args[0])
+    else:
+        init()    
+
+    with make_server('', 8051, simple_app) as httpd:
+        print("Serving on port 8051...")
+        httpd.serve_forever()
+
+
+if __name__ == "__main__":
+    try:
+        os.mkdir("upload")
+    except OSError as error:
+        print(error)        
+    try:
+        os.mkdir("trained_model")
+    except OSError as error:
+        print(error)        
+    
+    main()
