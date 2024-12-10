@@ -124,18 +124,22 @@ def simple_app(environ, start_response):
     if is_form_request(environ):
         forms, files = parse_form_data(environ)
         for filed_name in files:
-            file_details = files[filed_name]
-            filename = "upload/" + file_details.filename
-            file_details.save_as(filename) 
+            try:
+                file_details = files[filed_name]
+                print(f"process file:{file_details.filename}")
+                filename = "upload/" + id_generator() + "_" + file_details.filename
+                file_details.save_as(filename) 
 
-            trasncript = serve(filename)  
-            info = {}
-            info.filename = filename
-            info.trasncript = trasncript
-            results.append(info)
+                trasncript = serve(filename)  
+                info = {}
+                info.filename = filename
+                info.trasncript = trasncript
+                results.append(info)
 
-            if os.path.exists(filename):
-                os.remove(filename)
+                if os.path.exists(filename):
+                    os.remove(filename)
+            except Exception as e:
+                print(e)
 
     status = '200 OK'
     headers = [('Content-type', 'application/json; charset=utf-8')]
