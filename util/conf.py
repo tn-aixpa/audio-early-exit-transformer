@@ -12,9 +12,9 @@ def get_parser():
     parser.add_argument(
         "--decoder_mode",
         type=str.lower,
-        required=True,
+        required=False,
         choices=["ctc","aed"],
-        default=None,
+        default="ctc",
         help="""
             Required: Whether to use a connectionist temporal 
             classification-based ('ctc') or attention 

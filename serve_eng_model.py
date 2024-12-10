@@ -3,7 +3,7 @@ import re
 import string
 import random
 import json 
-import multipart
+from multipart import parse_form_data, is_form_request
 from wsgiref.simple_server import make_server
 from data_dh import get_infer_data_loader
 from models.model.early_exit import Early_conformer
@@ -46,7 +46,7 @@ def init():
     args.n_workers = 1
     args.shuffle = False
     args.decoder_mode = 'ctc'
-    context.args = args
+    context['args'] = args
     #setattr(context, "args", args)
 
     #project = dh.get_or_create_project("demo-early-exit-eng")
@@ -55,13 +55,15 @@ def init():
 
     path = "trained_model/mod032-transformer"
     model = load_model(path, args)
-    context.model = model
+    context['model'] = model
     #setattr(context, "model", model)
 
     file_dict = 'librispeech.lex'
     vocab = load_dict(file_dict)
-    context.vocab = vocab
+    context['vocab'] = vocab
     #setattr(context, "vocab", vocab)
+
+    print(f"app context:{len(context)}")
 
 
 
@@ -96,14 +98,14 @@ def load_model(model_path, args):
 
 def serve(path):
     # Used to access various inference functions, see util/beam_infer
-    inf = BeamInference(args=context.args)
+    inf = BeamInference(args=context['args'])
 
     paths = []
     paths.append(path)
-    data_loader = get_infer_data_loader(args=context.args, paths=paths)
+    data_loader = get_infer_data_loader(args=context['args'], paths=paths)
 
-    result = run(model=context.model, args=context.args, data_loader=data_loader,
-        inf=inf, vocab=context.vocab)
+    result = run(model=context['model'], args=context['args'], data_loader=data_loader,
+        inf=inf, vocab=context['vocab'])
     
     for num, transcript in enumerate(result):
         print(f"Transcript[{num}]:{transcript}")
@@ -119,32 +121,21 @@ def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
 
 def simple_app(environ, start_response):
     results = []
-    fields = {}
-    files = {}
-    def on_field(field):
-        fields[field.field_name] = field.value
-    def on_file(file):
-        files[file.field_name] = {'name': file.file_name.decode("utf-8"), 'file_object': file.file_object}
+    if is_form_request(environ):
+        forms, files = parse_form_data(environ)
+        for filed_name in files:
+            file_details = files[filed_name]
+            filename = "upload/" + file_details.filename
+            file_details.save_as(filename) 
 
-    if environ['REQUEST_METHOD'] == 'POST':
-        multipart_headers = {'Content-Type': environ['CONTENT_TYPE']}
-        multipart_headers['Content-Length'] = environ['CONTENT_LENGTH']
-        multipart.parse_form(multipart_headers, environ['wsgi.input'], on_field, on_file)
-        for filed_name, each_file_details in files.items():
-            filename = "upload/" + id_generator() + "_" + each_file_details['name']
-            with open(filename, 'wb') as f:
-                uploaded_file = each_file_details['file_object']
-                uploaded_file.seek(0)
-                f.write(uploaded_file.read())            
-            
-        trasncript = serve(filename)  
-        info = {}
-        info.filename = filename
-        info.trasncript = trasncript
-        results.append(info)
-        
-        if os.path.exists(filename):
-            os.remove(filename)
+            trasncript = serve(filename)  
+            info = {}
+            info.filename = filename
+            info.trasncript = trasncript
+            results.append(info)
+
+            if os.path.exists(filename):
+                os.remove(filename)
 
     status = '200 OK'
     headers = [('Content-type', 'application/json; charset=utf-8')]
@@ -155,6 +146,6 @@ def simple_app(environ, start_response):
 
 
 init()
-with make_server('', 8051, serve) as httpd:
+with make_server('', 8051, simple_app) as httpd:
     print("Serving on port 8051...")
     httpd.serve_forever()
