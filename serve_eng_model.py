@@ -131,8 +131,8 @@ def simple_app(environ, start_response):
 
                 trasncript = serve(filename)  
                 info = {}
-                info.filename = filename
-                info.trasncript = trasncript
+                info['filename'] = filename
+                info['trasncript'] = trasncript
                 results.append(info)
 
                 if os.path.exists(filename):
