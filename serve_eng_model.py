@@ -50,7 +50,7 @@ def init(model_name="early-exit-eng-model"):
 
     project = dh.get_or_create_project(os.getenv("PROJECT_NAME"))
     model = project.get_model(model_name)
-    path = model.download(destination="trained_model", overwrite=True)
+    path = model.download(destination="/data/trained_model", overwrite=True)
 
     #path = "trained_model/mod032-transformer"
     model = load_model(path, args)
@@ -126,7 +126,7 @@ def simple_app(environ, start_response):
             try:
                 file_details = files[filed_name]
                 print(f"process file:{file_details.filename}")
-                filename = "upload/" + id_generator() + "_" + file_details.filename
+                filename = "/data/upload/" + id_generator() + "_" + file_details.filename
                 file_details.save_as(filename) 
 
                 trasncript = serve(filename)  
