@@ -4,7 +4,7 @@ import torchaudio
 from util.data_loader import CollatePaddingFn, CollateInferFn
 
 
-def get_data_loader(args):
+def get_data_loader(args, dataset_path=None):
 
     # train_dataset1 = torchaudio.datasets.LIBRISPEECH(
     #     "", url="train-clean-100", download=False)
@@ -15,8 +15,11 @@ def get_data_loader(args):
     # train_dataset = torch.utils.data.ConcatDataset(
     #     [train_dataset1, train_dataset2, train_dataset3])
 
+    if dataset_path is None:
+        dataset_path = "./trained_model"
+
     train_dataset = torchaudio.datasets.LIBRISPEECH(
-        "", url="train-clean-100", download=False)
+        dataset_path, url="train-clean-100", download=False)
 
     collate_padding_fn = CollatePaddingFn(args=args)
     data_loader = torch.utils.data.DataLoader(train_dataset, 
