@@ -4,7 +4,8 @@ import random
 
 from io import BytesIO
 from urllib.request import urlopen
-from zipfile import ZipFile
+import tarfile
+import requests
 
 import torch
 from torch import nn, optim
@@ -23,10 +24,17 @@ from data import get_data_loader
 from digitalhub import Project
 
 
-def downoad_and_unzip(zipurl, path):
-    with urlopen(zipurl) as zipresp:
-        with ZipFile(BytesIO(zipresp.read())) as zfile:
-            zfile.extractall(path)
+def downoad_and_extract(tgzurl, path):
+    response = requests.get(tgzurl)
+    assert(response.status_code == 200), "Error downloading file " + tgzurl
+    with open(path, 'wb') as file:
+        file.write(response.content)
+    print('File downloaded successfully')
+
+    file = tarfile.open(path)
+    file.extractall()
+    file.close()
+    print('File extracted successfully')
 
 
 def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
@@ -185,19 +193,21 @@ def run(args, model, total_epoch, best_loss, data_loader, optimizer, loss_fn, ct
     return best_model
 
 
-def train(project: Project, libriSpeech_url: string, num_epochs: int, model_name: string):
-    download_dir = os.getcwd() + '/dowmload'
+def train(project: Project, librispeech_train_dataset: string, num_epochs: int, model_name: string):
+    download_dir = os.getcwd() + '/dowmload/'
 
     try:
         os.mkdir(download_dir)
     except OSError as error:
         print(error)
 
-    # Download and unzip dataset
-    try:
-        downoad_and_unzip(libriSpeech_url, download_dir)
-    except OSError as error:
-        print(error)
+    # Download and unzip training and test dataset
+    train_url = "https://www.openslr.org/resources/12/" + librispeech_train_dataset + ".tar.gz"
+    train_path = download_dir + "train.tar.gz"
+    downoad_and_extract(train_url, train_path)
+    test_url = "https://www.openslr.org/resources/12/test-clean.tar.gz"
+    test_path = download_dir + "test.tar.gz"
+    downoad_and_extract(test_url, test_path)
 
     # initialize settings
     args = get_args()
