@@ -5,7 +5,6 @@ import random
 from io import BytesIO
 from urllib.request import urlretrieve
 import tarfile
-import requests
 
 import torch
 from torch import nn, optim
@@ -26,13 +25,14 @@ if typing.TYPE_CHECKING:
     from digitalhub.entities.project._base.entity import Project
 
 
-def downoad_and_extract(tgzurl, path):
+def downoad_and_extract(tgzurl, path, filename):
+    filepath = path + filename
     print('File download:' + tgzurl)
-    urlretrieve(tgzurl, path)
+    urlretrieve(tgzurl, filepath)
     print('File downloaded successfully:' + tgzurl)
 
-    file = tarfile.open(path)
-    file.extractall()
+    file = tarfile.open(filepath)
+    file.extractall(path)
     file.close()
     print('File extracted successfully:' + path)
 
@@ -193,8 +193,8 @@ def run(args, model, total_epoch, best_loss, data_loader, optimizer, loss_fn, ct
     return best_model
 
 
-def train(project, librispeech_train_dataset: str, num_epochs: int, model_name: str):
-    download_dir = '/data/dowmload/'
+def dh_train(project, librispeech_train_dataset: str, num_epochs: int, model_name: str):
+    download_dir = '/data/download/'
 
     try:
         os.mkdir(download_dir)
@@ -203,11 +203,9 @@ def train(project, librispeech_train_dataset: str, num_epochs: int, model_name: 
 
     # Download and unzip training and test dataset
     train_url = "https://www.openslr.org/resources/12/" + librispeech_train_dataset + ".tar.gz"
-    train_path = download_dir + "train.tar.gz"
-    downoad_and_extract(train_url, train_path)
+    downoad_and_extract(train_url, download_dir, "train.tar.gz")
     test_url = "https://www.openslr.org/resources/12/test-clean.tar.gz"
-    test_path = download_dir + "test.tar.gz"
-    downoad_and_extract(test_url, test_path)
+    downoad_and_extract(test_url, download_dir, "test.tar.gz")
 
     # initialize settings
     args = get_args()
