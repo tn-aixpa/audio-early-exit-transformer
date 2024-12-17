@@ -29,14 +29,14 @@ if typing.TYPE_CHECKING:
 def downoad_and_extract(tgzurl, path):
     response = requests.get(tgzurl)
     assert(response.status_code == 200), "Error downloading file " + tgzurl
-    with open(path, 'wb') as file:
+    with open(path, 'xb') as file:
         file.write(response.content)
-    print('File downloaded successfully')
+    print('File downloaded successfully:' + path)
 
     file = tarfile.open(path)
     file.extractall()
     file.close()
-    print('File extracted successfully')
+    print('File extracted successfully:' + path)
 
 
 def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
