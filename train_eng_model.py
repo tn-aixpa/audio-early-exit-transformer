@@ -21,7 +21,9 @@ from util.model_utils import *
 from util.tokenizer import *
 from data import get_data_loader
 
-from digitalhub import Project
+import typing
+if typing.TYPE_CHECKING:
+    from digitalhub.entities.project._base.entity import Project
 
 
 def downoad_and_extract(tgzurl, path):
