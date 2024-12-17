@@ -155,7 +155,7 @@ def run(args, model, total_epoch, best_loss, data_loader, optimizer, loss_fn, ct
     loss_prev = 9999999
     nepoch = -1
 
-    moddir = os.getcwd() + '/' + args.save_model_dir + '/'
+    moddir = '/data/' + args.save_model_dir + '/'
     os.makedirs(moddir, exist_ok=True)
 
     best_model = moddir+'{}mod{:03d}-transformer'.format('', nepoch)
@@ -194,7 +194,7 @@ def run(args, model, total_epoch, best_loss, data_loader, optimizer, loss_fn, ct
 
 
 def train(project: Project, librispeech_train_dataset: string, num_epochs: int, model_name: string):
-    download_dir = os.getcwd() + '/dowmload/'
+    download_dir = '/data/dowmload/'
 
     try:
         os.mkdir(download_dir)
