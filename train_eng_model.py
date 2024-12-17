@@ -3,7 +3,7 @@ import string
 import random
 
 from io import BytesIO
-from urllib.request import urlopen
+from urllib.request import urlretrieve
 import tarfile
 import requests
 
@@ -27,11 +27,9 @@ if typing.TYPE_CHECKING:
 
 
 def downoad_and_extract(tgzurl, path):
-    response = requests.get(tgzurl)
-    assert(response.status_code == 200), "Error downloading file " + tgzurl
-    with open(path, 'xb') as file:
-        file.write(response.content)
-    print('File downloaded successfully:' + path)
+    print('File download:' + tgzurl)
+    urlretrieve(tgzurl, path)
+    print('File downloaded successfully:' + tgzurl)
 
     file = tarfile.open(path)
     file.extractall()
