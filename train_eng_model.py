@@ -195,7 +195,7 @@ def run(args, model, total_epoch, best_loss, data_loader, optimizer, loss_fn, ct
     return best_model
 
 
-def train(project: Project, librispeech_train_dataset: string, num_epochs: int, model_name: string):
+def train(project, librispeech_train_dataset: str, num_epochs: int, model_name: str):
     download_dir = '/data/dowmload/'
 
     try:
