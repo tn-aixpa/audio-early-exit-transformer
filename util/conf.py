@@ -446,7 +446,7 @@ def get_args(initial_args=None):
         args = parser.parse_args()
     else:
         args = parser.parse_args(initial_args)
-        
+
     conf = vars(args)
 
     conf["decoder_mode"] = args.decoder_mode.lower()
@@ -462,15 +462,15 @@ def get_args(initial_args=None):
 
     if args.bpe == True:
         conf["sp"] = spm.SentencePieceProcessor()
-        conf["sp"].load('sentencepiece/build/libri.bpe-256.model')
+        conf["sp"].load('./sentencepiece/build/libri.bpe-256.model')
         conf["src_pad_idx"] = 0
         conf["trg_pad_idx"] = 126
         conf["trg_sos_idx"] = 1
         conf["trg_eos_idx"] = 2
         conf["enc_voc_size"] = conf["sp"].get_piece_size()
         conf["dec_voc_size"] = conf["sp"].get_piece_size()
-        conf["lexicon"] = "sentencepiece/build/librispeech-bpe-256.lex"
-        conf["tokens"] = "sentencepiece/build/librispeech-bpe-256.tok"
+        conf["lexicon"] = "./sentencepiece/build/librispeech-bpe-256.lex"
+        conf["tokens"] = "./sentencepiece/build/librispeech-bpe-256.tok"
  
     conf["inf"] = float('inf')
 
