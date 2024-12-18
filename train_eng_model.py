@@ -193,7 +193,7 @@ def run(args, model, total_epoch, best_loss, data_loader, optimizer, loss_fn, ct
     return best_model
 
 
-def dh_train(project, librispeech_train_dataset: str, num_epochs: int, model_name: str):
+def dh_train(project, librispeech_train_dataset: str, num_epochs: int, model_name: str, base_dir: str):
     download_dir = '/data/download/'
 
     try:
@@ -208,7 +208,7 @@ def dh_train(project, librispeech_train_dataset: str, num_epochs: int, model_nam
     downoad_and_extract(test_url, download_dir, "test.tar.gz")
 
     # initialize settings
-    args = get_args([])
+    args = get_args([], base_dir)
     args.batch_size = 15
     args.n_workers = 3
     args.shuffle = False
