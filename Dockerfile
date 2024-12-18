@@ -13,5 +13,9 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8051
 
+USER 65535
+
 ENTRYPOINT ["python", "serve_eng_model.py"]
+
+
 
