@@ -440,10 +440,13 @@ def get_parser():
 
     return parser
 
-def get_args():
+def get_args(initial_args=None):
     parser = get_parser()
-    args = parser.parse_args()
-
+    if initial_args is None:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(initial_args)
+        
     conf = vars(args)
 
     conf["decoder_mode"] = args.decoder_mode.lower()

@@ -208,7 +208,7 @@ def dh_train(project, librispeech_train_dataset: str, num_epochs: int, model_nam
     downoad_and_extract(test_url, download_dir, "test.tar.gz")
 
     # initialize settings
-    args = get_args()
+    args = get_args([])
     args.batch_size = 15
     args.n_workers = 3
     args.shuffle = False
