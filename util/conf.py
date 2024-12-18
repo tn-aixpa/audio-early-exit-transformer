@@ -461,9 +461,9 @@ def get_args(initial_args=None, base_dir=None):
     conf["dec_voc_size"] = 32
 
     if args.bpe == True:
-        if work_dir is None:
-            work_dir = './'
-        conf["sp"] = spm.SentencePieceProcessor(work_dir + 'sentencepiece/build/libri.bpe-256.model')
+        if base_dir is None:
+            base_dir = './'
+        conf["sp"] = spm.SentencePieceProcessor(base_dir + 'sentencepiece/build/libri.bpe-256.model')
         #conf["sp"].load('./sentencepiece/build/libri.bpe-256.model')
         conf["src_pad_idx"] = 0
         conf["trg_pad_idx"] = 126
@@ -471,8 +471,8 @@ def get_args(initial_args=None, base_dir=None):
         conf["trg_eos_idx"] = 2
         conf["enc_voc_size"] = conf["sp"].get_piece_size()
         conf["dec_voc_size"] = conf["sp"].get_piece_size()
-        conf["lexicon"] = work_dir + "sentencepiece/build/librispeech-bpe-256.lex"
-        conf["tokens"] = work_dir + "sentencepiece/build/librispeech-bpe-256.tok"
+        conf["lexicon"] = base_dir + "sentencepiece/build/librispeech-bpe-256.lex"
+        conf["tokens"] = base_dir + "sentencepiece/build/librispeech-bpe-256.tok"
  
     conf["inf"] = float('inf')
 
