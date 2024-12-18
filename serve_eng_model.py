@@ -40,7 +40,7 @@ def run(args, model, data_loader, inf, vocab):
 
 
 def init(model_name="early-exit-eng-model"):
-    args = get_args()
+    args = get_args(initial_args=[])
     args.batch_size = 1
     args.n_workers = 1
     args.shuffle = False
@@ -162,11 +162,11 @@ def main():
 
 if __name__ == "__main__":
     try:
-        os.mkdir("upload")
+        os.mkdir("/data/upload")
     except OSError as error:
         print(error)        
     try:
-        os.mkdir("trained_model")
+        os.mkdir("/data/trained_model")
     except OSError as error:
         print(error)        
     
