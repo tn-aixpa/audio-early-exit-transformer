@@ -461,8 +461,8 @@ def get_args(initial_args=None):
     conf["dec_voc_size"] = 32
 
     if args.bpe == True:
-        conf["sp"] = spm.SentencePieceProcessor()
-        conf["sp"].load('./sentencepiece/build/libri.bpe-256.model')
+        conf["sp"] = spm.SentencePieceProcessor('./sentencepiece/build/libri.bpe-256.model')
+        #conf["sp"].load('./sentencepiece/build/libri.bpe-256.model')
         conf["src_pad_idx"] = 0
         conf["trg_pad_idx"] = 126
         conf["trg_sos_idx"] = 1
