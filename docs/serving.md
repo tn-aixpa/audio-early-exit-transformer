@@ -13,7 +13,7 @@ project = dh.get_or_create_project("demo-early-exit-eng")
 function = project.new_function(
     kind='container',
     name='serve_eng_function',
-    image="ghcr.io/tn-aixpa/audio-early-exit-eng:latest",
+    image="ghcr.io/tn-aixpa/audio-early-exit-eng:0.1",
     args=["early-exit-eng-model"]
 )
 ```
