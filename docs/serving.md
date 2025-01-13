@@ -49,12 +49,14 @@ With KRM tool a volume must be defined in order to store the model file used in 
 ```Python
 import requests
 
-url = "http://" + run.status.service.name
 file_path = "test-audio.wav"
+
+run.refresh()
+url = "http://" + run.status.service['url']
 
 with open(file_path, "rb") as file:
     files = {'file': file}
-    response = requests.post(url, files=files)
+    response =  run.invoke(files=files, method='POST')
 
 print(f"response code:{response.status_code}")
 print(f"response body:{response.text}")
