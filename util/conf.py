@@ -21,6 +21,19 @@ def get_parser():
             encoder-decoder-based ('aed') decoder.
         """
     )
+    
+    parser.add_argument(
+        "--model_type",
+        type=str.lower,
+        required=False,
+        choices=["early_conformer","early_zipformer", "early_conformer_plus"],
+        default="early_conformer",
+        help="""
+            Required: If you use a connectionist temporal 
+            classification-based ('ctc') decoder, choose 
+            the model you want to use.
+        """
+    )
 
     parser.add_argument(
         "--bpe",
@@ -464,7 +477,6 @@ def get_args(initial_args=None, base_dir=None):
         if base_dir is None:
             base_dir = './'
         conf["sp"] = spm.SentencePieceProcessor(base_dir + 'sentencepiece/build/libri.bpe-256.model')
-        #conf["sp"].load('./sentencepiece/build/libri.bpe-256.model')
         conf["src_pad_idx"] = 0
         conf["trg_pad_idx"] = 126
         conf["trg_sos_idx"] = 1

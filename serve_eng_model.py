@@ -15,7 +15,7 @@ from util.tokenizer import *
 import digitalhub as dh
 
 
-context = {}
+context_dict = {}
 
 def evaluate_batch_ctc(args, model, batch, valid_len, inf, vocab):
     encoder = model(batch[0].to(args.device), valid_len)
@@ -39,30 +39,44 @@ def run(args, model, data_loader, inf, vocab):
     return result
 
 
-def init(model_name="early-exit-eng-model"):
+def init(context, model_name="early-exit-eng-model"):
+    try:
+        os.mkdir("/data/upload")
+        context.logger.info("create dir data/upload")
+    except OSError as error:
+        context.logger.warn(f"create dir data/upload error:{error}")
+    try:
+        os.mkdir("/data/trained_model")
+        context.logger.info("create dir data/trained_model")
+    except OSError as error:
+        context.logger.warn(f"create dir data/trained_model error:{error}")
+
     args = get_args(initial_args=[])
     args.batch_size = 1
     args.n_workers = 1
     args.shuffle = False
     args.decoder_mode = 'ctc'
-    context['args'] = args
+    args.model_type == 'early_conformer'
+
+    context_dict['args'] = args
     #setattr(context, "args", args)
 
-    project = dh.get_or_create_project(os.getenv("PROJECT_NAME"))
+    #project = dh.get_or_create_project(os.getenv("PROJECT_NAME"))
+    project = context.project
     model = project.get_model(model_name)
     path = model.download(destination="/data/trained_model", overwrite=True)
 
     #path = "trained_model/mod032-transformer"
     model = load_model(path, args)
-    context['model'] = model
+    context_dict['model'] = model
     #setattr(context, "model", model)
 
     file_dict = 'librispeech.lex'
     vocab = load_dict(file_dict)
-    context['vocab'] = vocab
+    context_dict['vocab'] = vocab
     #setattr(context, "vocab", vocab)
 
-    print(f"app context:{len(context)}")
+    print(f"app context:{len(context_dict)}")
 
 
 def load_model(model_path, args):
@@ -94,16 +108,16 @@ def load_model(model_path, args):
     return model
 
 
-def serve(path):
+def serve_local(path):
     # Used to access various inference functions, see util/beam_infer
-    inf = BeamInference(args=context['args'])
+    inf = BeamInference(args=context_dict['args'])
 
     paths = []
     paths.append(path)
-    data_loader = get_infer_data_loader(args=context['args'], paths=paths)
+    data_loader = get_infer_data_loader(args=context_dict['args'], paths=paths)
 
-    result = run(model=context['model'], args=context['args'], data_loader=data_loader,
-        inf=inf, vocab=context['vocab'])
+    result = run(model=context_dict['model'], args=context_dict['args'], data_loader=data_loader,
+        inf=inf, vocab=context_dict['vocab'])
     
     for num, transcript in enumerate(result):
         print(f"Transcript[{num}]:{transcript}")
@@ -112,6 +126,25 @@ def serve(path):
         return result[0]
     else:
         return ""
+
+
+def serve(context, event):
+    context.logger.info(f"Received event: {event.body}")
+    artifact_name = event.body["name"]
+    artifact = context.project.get_artifact(artifact_name)    
+    path = artifact.download(destination="/data/upload", overwrite=True)
+    
+    transcript = serve_local(path)
+    context.logger.warn(f"Transcript for file {path}:{transcript}")
+
+    results = []
+    info = {}
+    info['filename'] = artifact_name
+    info['transcript'] = transcript
+    results.append(info)
+
+    return results
+       
 
 
 def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
@@ -129,7 +162,7 @@ def simple_app(environ, start_response):
                 filename = "/data/upload/" + id_generator() + "_" + file_details.filename
                 file_details.save_as(filename) 
 
-                trasncript = serve(filename)  
+                trasncript = serve_local(filename)  
                 info = {}
                 info['filename'] = filename
                 info['trasncript'] = trasncript
@@ -151,7 +184,7 @@ def simple_app(environ, start_response):
 def main():
     args = sys.argv[1:] 
     if len(args) > 0:
-        init(args[0])
+        init(model_name=args[0])
     else:
         init()    
 
@@ -161,13 +194,4 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
-        os.mkdir("/data/upload")
-    except OSError as error:
-        print(error)        
-    try:
-        os.mkdir("/data/trained_model")
-    except OSError as error:
-        print(error)        
-    
     main()
