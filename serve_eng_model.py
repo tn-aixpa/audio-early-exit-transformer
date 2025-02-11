@@ -39,7 +39,7 @@ def run(args, model, data_loader, inf, vocab):
     return result
 
 
-def init(context, model_name="early-exit-eng-model"):
+def init(context, model_name="early-exit-eng-model", sp_model="bpe-256.model", sp_lexicon="bpe-256.lex", sp_tokens="bpe-256.tok"):
     try:
         os.mkdir("/data/upload")
         context.logger.info("create dir data/upload")
@@ -50,8 +50,25 @@ def init(context, model_name="early-exit-eng-model"):
         context.logger.info("create dir data/trained_model")
     except OSError as error:
         context.logger.warn(f"create dir data/trained_model error:{error}")
+    try:
+        os.mkdir("/data/sentencepiece")
+        context.logger.info("create dir data/sentencepiece")
+    except OSError as error:
+        context.logger.warn(f"create dir data/sentencepiece error:{error}")
 
-    args = get_args(initial_args=[])
+    #project = dh.get_or_create_project(os.getenv("PROJECT_NAME"))
+    project = context.project
+
+    sp_model_artifact = context.project.get_artifact(sp_model)    
+    sp_model_path = sp_model_artifact.download(destination="/data/sentencepiece", overwrite=True)
+
+    sp_lexicon_artifact = context.project.get_artifact(sp_lexicon)    
+    sp_lexicon_path = sp_lexicon_artifact.download(destination="/data/sentencepiece", overwrite=True)
+
+    sp_tokens_artifact = context.project.get_artifact(sp_tokens)    
+    sp_tokens_path = sp_tokens_artifact.download(destination="/data/sentencepiece", overwrite=True)
+
+    args = get_args(initial_args=[], sp_model=sp_model_path, sp_lexicon=sp_lexicon_path, sp_tokens=sp_tokens_path)
     args.batch_size = 1
     args.n_workers = 1
     args.shuffle = False
@@ -59,22 +76,15 @@ def init(context, model_name="early-exit-eng-model"):
     args.model_type == 'early_conformer'
 
     context_dict['args'] = args
-    #setattr(context, "args", args)
 
-    #project = dh.get_or_create_project(os.getenv("PROJECT_NAME"))
-    project = context.project
     model = project.get_model(model_name)
     path = model.download(destination="/data/trained_model", overwrite=True)
-
-    #path = "trained_model/mod032-transformer"
     model = load_model(path, args)
     context_dict['model'] = model
-    #setattr(context, "model", model)
 
     file_dict = 'librispeech.lex'
     vocab = load_dict(file_dict)
     context_dict['vocab'] = vocab
-    #setattr(context, "vocab", vocab)
 
     print(f"app context:{len(context_dict)}")
 

@@ -453,7 +453,7 @@ def get_parser():
 
     return parser
 
-def get_args(initial_args=None, base_dir=None):
+def get_args(initial_args=None, sp_model=None, sp_lexicon=None, sp_tokens=None):
     parser = get_parser()
     if initial_args is None:
         args = parser.parse_args()
@@ -474,17 +474,16 @@ def get_args(initial_args=None, base_dir=None):
     conf["dec_voc_size"] = 32
 
     if args.bpe == True:
-        if base_dir is None:
-            base_dir = './'
-        conf["sp"] = spm.SentencePieceProcessor(base_dir + 'sentencepiece/build/libri.bpe-256.model')
+        #conf["sp"] = spm.SentencePieceProcessor(base_dir + 'sentencepiece/build/libri.bpe-256.model')
+        conf["sp"] = spm.SentencePieceProcessor(sp_model)
         conf["src_pad_idx"] = 0
         conf["trg_pad_idx"] = 126
         conf["trg_sos_idx"] = 1
         conf["trg_eos_idx"] = 2
         conf["enc_voc_size"] = conf["sp"].get_piece_size()
         conf["dec_voc_size"] = conf["sp"].get_piece_size()
-        conf["lexicon"] = base_dir + "sentencepiece/build/librispeech-bpe-256.lex"
-        conf["tokens"] = base_dir + "sentencepiece/build/librispeech-bpe-256.tok"
+        conf["lexicon"] = sp_lexicon #base_dir + "sentencepiece/build/librispeech-bpe-256.lex"
+        conf["tokens"] = sp_tokens #base_dir + "sentencepiece/build/librispeech-bpe-256.tok"
  
     conf["inf"] = float('inf')
 
