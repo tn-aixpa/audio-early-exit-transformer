@@ -39,7 +39,8 @@ def run(args, model, data_loader, inf, vocab):
     return result
 
 
-def init(context, model_name="early-exit-eng-model", sp_model="bpe-256.model", sp_lexicon="bpe-256.lex", sp_tokens="bpe-256.tok"):
+def init(context, model_name="early-exit-eng-model", dictionary="dictionary.lex",
+         sp_model="bpe-256.model", sp_lexicon="bpe-256.lex", sp_tokens="bpe-256.tok"):
     try:
         os.mkdir("/data/upload")
         context.logger.info("create dir data/upload")
@@ -82,11 +83,13 @@ def init(context, model_name="early-exit-eng-model", sp_model="bpe-256.model", s
     model = load_model(path, args)
     context_dict['model'] = model
 
-    file_dict = 'librispeech.lex'
-    vocab = load_dict(file_dict)
+    # load dictionary
+    dictionary_artifact = context.project.get_artifact(dictionary)    
+    dictionary_path = dictionary_artifact.download(destination="/data/sentencepiece", overwrite=True)
+    vocab = load_dict(dictionary_path)
     context_dict['vocab'] = vocab
 
-    print(f"app context:{len(context_dict)}")
+    context.logger.info(f"init:{len(context_dict)}")
 
 
 def load_model(model_path, args):
