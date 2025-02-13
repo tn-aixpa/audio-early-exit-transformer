@@ -39,7 +39,7 @@ def run(args, model, data_loader, inf, vocab):
     return result
 
 
-def init(context, model_name="early-exit-eng-model", dictionary="dictionary.lex",
+def init(context, model_name="early-exit-eng-model", lexicon="lexicon.lex",
          sp_model="bpe-256.model", sp_lexicon="bpe-256.lex", sp_tokens="bpe-256.tok"):
     try:
         os.mkdir("/data/upload")
@@ -83,10 +83,10 @@ def init(context, model_name="early-exit-eng-model", dictionary="dictionary.lex"
     model = load_model(path, args)
     context_dict['model'] = model
 
-    # load dictionary
-    dictionary_artifact = context.project.get_artifact(dictionary)    
-    dictionary_path = dictionary_artifact.download(destination="/data/sentencepiece", overwrite=True)
-    vocab = load_dict(dictionary_path)
+    # load lexicon
+    lexicon_artifact = context.project.get_artifact(lexicon)    
+    lexicon_path = lexicon_artifact.download(destination="/data/sentencepiece", overwrite=True)
+    vocab = load_dict(lexicon_path)
     context_dict['vocab'] = vocab
 
     context.logger.info(f"init:{len(context_dict)}")
