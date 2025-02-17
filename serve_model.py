@@ -17,6 +17,8 @@ import digitalhub as dh
 
 context_dict = {}
 
+data_path="/data"
+
 def evaluate_batch_ctc(args, model, batch, valid_len, inf, vocab):
     encoder = model(batch[0].to(args.device), valid_len)
     #print(f"encoder:{encoder}")
@@ -42,17 +44,17 @@ def run(args, model, data_loader, inf, vocab):
 def init(context, model_name="early-exit-model", lexicon="lexicon.lex",
          sp_model="bpe-256.model", sp_lexicon="bpe-256.lex", sp_tokens="bpe-256.tok"):
     try:
-        os.mkdir("/data/upload")
+        os.mkdir(data_path + "/upload")
         context.logger.info("create dir data/upload")
     except OSError as error:
         context.logger.warn(f"create dir data/upload error:{error}")
     try:
-        os.mkdir("/data/trained_model")
+        os.mkdir(data_path + "/trained_model")
         context.logger.info("create dir data/trained_model")
     except OSError as error:
         context.logger.warn(f"create dir data/trained_model error:{error}")
     try:
-        os.mkdir("/data/sentencepiece")
+        os.mkdir(data_path + "/sentencepiece")
         context.logger.info("create dir data/sentencepiece")
     except OSError as error:
         context.logger.warn(f"create dir data/sentencepiece error:{error}")
@@ -145,7 +147,7 @@ def serve(context, event):
     context.logger.info(f"Received event: {event.body}")
     artifact_name = event.body["name"]
     artifact = context.project.get_artifact(artifact_name)    
-    path = artifact.download(destination="/data/upload", overwrite=True)
+    path = artifact.download(destination=data_path + "/upload", overwrite=True)
     
     transcript = serve_local(path)
     context.logger.warn(f"Transcript for file {path}:{transcript}")
@@ -172,7 +174,7 @@ def simple_app(environ, start_response):
             try:
                 file_details = files[filed_name]
                 print(f"process file:{file_details.filename}")
-                filename = "/data/upload/" + id_generator() + "_" + file_details.filename
+                filename = data_path + "/upload/" + id_generator() + "_" + file_details.filename
                 file_details.save_as(filename) 
 
                 trasncript = serve_local(filename)  
