@@ -79,6 +79,7 @@ def init(context, model_name="early-exit-model", lexicon="lexicon.lex",
     args.model_type == 'early_conformer'
 
     context_dict['args'] = args
+    context.logger.info(f"context args:{context_dict['args']}")
 
     model = project.get_model(model_name)
     path = model.download(destination=data_path + "/trained_model", overwrite=True)
@@ -91,7 +92,7 @@ def init(context, model_name="early-exit-model", lexicon="lexicon.lex",
     vocab = load_dict(lexicon_path)
     context_dict['vocab'] = vocab
 
-    context.logger.info(f"init:{context_dict}")
+    context.logger.info(f"init:{len(context_dict)}")
 
 
 def load_model(model_path, args):
