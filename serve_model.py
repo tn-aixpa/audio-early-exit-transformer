@@ -146,6 +146,7 @@ def serve_local(path):
 
 def serve(context, event):
     context.logger.info(f"Received event: {event.body}")
+    context.logger.info(f"serve context args:{context_dict['args']}")    
     artifact_name = event.body["name"]
     artifact = context.project.get_artifact(artifact_name)    
     path = artifact.download(destination=data_path + "/upload", overwrite=True)
