@@ -62,14 +62,14 @@ def init(context, model_name="early-exit-model", lexicon="lexicon.lex",
     #project = dh.get_or_create_project(os.getenv("PROJECT_NAME"))
     project = context.project
 
-    sp_model_artifact = context.project.get_artifact(sp_model)    
-    sp_model_path = sp_model_artifact.download(destination="/data/sentencepiece", overwrite=True)
+    sp_model_artifact = project.get_artifact(sp_model)    
+    sp_model_path = sp_model_artifact.download(destination=data_path + "/sentencepiece", overwrite=True)
 
-    sp_lexicon_artifact = context.project.get_artifact(sp_lexicon)    
-    sp_lexicon_path = sp_lexicon_artifact.download(destination="/data/sentencepiece", overwrite=True)
+    sp_lexicon_artifact = project.get_artifact(sp_lexicon)    
+    sp_lexicon_path = sp_lexicon_artifact.download(destination=data_path + "/sentencepiece", overwrite=True)
 
-    sp_tokens_artifact = context.project.get_artifact(sp_tokens)    
-    sp_tokens_path = sp_tokens_artifact.download(destination="/data/sentencepiece", overwrite=True)
+    sp_tokens_artifact = project.get_artifact(sp_tokens)    
+    sp_tokens_path = sp_tokens_artifact.download(destination=data_path + "/sentencepiece", overwrite=True)
 
     args = get_args(initial_args=[], sp_model=sp_model_path, sp_lexicon=sp_lexicon_path, sp_tokens=sp_tokens_path)
     args.batch_size = 1
@@ -81,13 +81,13 @@ def init(context, model_name="early-exit-model", lexicon="lexicon.lex",
     context_dict['args'] = args
 
     model = project.get_model(model_name)
-    path = model.download(destination="/data/trained_model", overwrite=True)
+    path = model.download(destination=data_path + "/trained_model", overwrite=True)
     model = load_model(path, args)
     context_dict['model'] = model
 
     # load lexicon
-    lexicon_artifact = context.project.get_artifact(lexicon)    
-    lexicon_path = lexicon_artifact.download(destination="/data/sentencepiece", overwrite=True)
+    lexicon_artifact = project.get_artifact(lexicon)    
+    lexicon_path = lexicon_artifact.download(destination=data_path + "/sentencepiece", overwrite=True)
     vocab = load_dict(lexicon_path)
     context_dict['vocab'] = vocab
 
