@@ -39,7 +39,7 @@ def run(args, model, data_loader, inf, vocab):
     return result
 
 
-def init(context, model_name="early-exit-eng-model", lexicon="lexicon.lex",
+def init(context, model_name="early-exit-model", lexicon="lexicon.lex",
          sp_model="bpe-256.model", sp_lexicon="bpe-256.lex", sp_tokens="bpe-256.tok"):
     try:
         os.mkdir("/data/upload")
