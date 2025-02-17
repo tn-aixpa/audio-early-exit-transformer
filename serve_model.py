@@ -91,7 +91,7 @@ def init(context, model_name="early-exit-model", lexicon="lexicon.lex",
     vocab = load_dict(lexicon_path)
     context_dict['vocab'] = vocab
 
-    context.logger.info(f"init:{len(context_dict)}")
+    context.logger.info(f"init:{context_dict}")
 
 
 def load_model(model_path, args):
