@@ -79,7 +79,6 @@ def init(context, model_name="early-exit-model", lexicon="lexicon.lex",
     args.model_type == 'early_conformer'
 
     context_dict['args'] = args
-    context.logger.info(f"context args:{context_dict['args']}")
 
     model = project.get_model(model_name)
     path = model.download(destination=data_path + "/trained_model", overwrite=True)
@@ -93,6 +92,8 @@ def init(context, model_name="early-exit-model", lexicon="lexicon.lex",
     context_dict['vocab'] = vocab
 
     context.logger.info(f"init:{len(context_dict)}")
+    
+    setattr(context, "context_dict", context_dict)
 
 
 def load_model(model_path, args):
@@ -124,7 +125,7 @@ def load_model(model_path, args):
     return model
 
 
-def serve_local(path):
+def serve_local(context_dict, path):
     # Used to access various inference functions, see util/beam_infer
     inf = BeamInference(args=context_dict['args'])
 
@@ -146,12 +147,11 @@ def serve_local(path):
 
 def serve(context, event):
     context.logger.info(f"Received event: {event.body}")
-    context.logger.info(f"serve context args:{context_dict['args']}")    
     artifact_name = event.body["name"]
     artifact = context.project.get_artifact(artifact_name)    
     path = artifact.download(destination=data_path + "/upload", overwrite=True)
     
-    transcript = serve_local(path)
+    transcript = serve_local(context.context_dict, path)
     context.logger.warn(f"Transcript for file {path}:{transcript}")
 
     results = []
@@ -177,7 +177,7 @@ def simple_app(environ, start_response):
                 file_details = files[filed_name]
                 print(f"process file:{file_details.filename}")
                 filename = data_path + "/upload/" + id_generator() + "_" + file_details.filename
-                file_details.save_as(filename) 
+                file_details.save_as(context_dict, filename) 
 
                 trasncript = serve_local(filename)  
                 info = {}
