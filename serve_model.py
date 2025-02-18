@@ -163,6 +163,31 @@ def serve(context, event):
     return results
        
 
+def serve_multipart(context, event):
+    context.logger.info("Received multipart event")
+    results = []
+    if is_form_request(event):
+        forms, files = parse_form_data(event)
+        for filed_name in files:
+            try:
+                file_details = files[filed_name]
+                print(f"process file:{file_details.filename}")
+                filename = data_path + "/upload/" + id_generator() + "_" + file_details.filename
+                file_details.save_as(filename) 
+
+                trasncript = serve_local(filename)  
+                info = {}
+                info['filename'] = filename
+                info['trasncript'] = trasncript
+                results.append(info)
+
+                if os.path.exists(filename):
+                    os.remove(filename)
+            except Exception as e:
+                print(e)
+    
+    return results
+
 
 def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
