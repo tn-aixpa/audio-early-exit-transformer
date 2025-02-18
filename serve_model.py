@@ -4,6 +4,7 @@ import re
 import string
 import random
 import json 
+import io
 from multipart import parse_form_data, is_form_request
 from wsgiref.simple_server import make_server
 from data_dh import get_infer_data_loader
@@ -164,12 +165,15 @@ def serve(context, event):
        
 
 def serve_multipart(context, event):
-    context.logger.info("Received multipart event")
-    results = []
-    if is_form_request(event):
-        forms, files = parse_form_data(event)
-        for filed_name in files:
-            try:
+    try:
+        content_type = event.headers.get('Content-Type', '')
+        context.logger.info(f"Received multipart event {content_type}")
+        results = []
+        file_data = event.body
+        environ = io.BytesIO(file_data)
+        if is_form_request(environ):
+            forms, files = parse_form_data(environ)
+            for filed_name in files:
                 file_details = files[filed_name]
                 print(f"process file:{file_details.filename}")
                 filename = data_path + "/upload/" + id_generator() + "_" + file_details.filename
@@ -183,10 +187,12 @@ def serve_multipart(context, event):
 
                 if os.path.exists(filename):
                     os.remove(filename)
-            except Exception as e:
-                print(e)
-    
-    return results
+        
+        return results
+    except Exception as e:
+        print(e)
+        return context.Response(content=f"Error:{e}", status=500)
+
 
 
 def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
