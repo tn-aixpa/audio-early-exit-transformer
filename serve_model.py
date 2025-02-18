@@ -167,7 +167,7 @@ def serve(context, event):
 def serve_multipart(context, event):
     try:
         content_type = event.headers.get('Content-Type', '')
-        context.logger.info(f"Received multipart event {content_type}")
+        context.logger.info(f"Received multipart event: {content_type}")
         results = []
         file_data = event.body
         environ = io.BytesIO(file_data)
@@ -191,7 +191,7 @@ def serve_multipart(context, event):
         return results
     except Exception as e:
         print(e)
-        return context.Response(content=f"Error:{e}", status=500)
+        return context.Response(body=f"Error:{e}", status=500)
 
 
 
