@@ -173,8 +173,10 @@ def serve_multipart(context, event):
         results = []
         file_data = event.body
         environ = io.BytesIO(file_data)
-        if is_form_request(environ):
+        print("serve_multipart buffer")
+        if 'multipart/form-data' in content_type:
             forms, files = parse_form_data(environ)
+            print("serve_multipart files")
             for filed_name in files:
                 file_details = files[filed_name]
                 print(f"process file:{file_details.filename}")
