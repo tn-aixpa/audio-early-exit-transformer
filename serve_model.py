@@ -195,7 +195,7 @@ def serve_multipart(context, event):
         return results
     except Exception as e:
         print(f"serve_multipart error:{e}")
-        return context.Response(body=f"Error:{e}", status=500)
+        return context.Response(body=f"Error:{e}", status_code=500)
 
 
 
