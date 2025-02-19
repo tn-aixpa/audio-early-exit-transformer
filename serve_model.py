@@ -171,12 +171,18 @@ def serve_multipart(context, event):
         content_type = event.headers.get('Content-Type', '')
         context.logger.info(f"Received multipart event: {content_type}")
         results = []
-        file_data = event.body
-        environ = io.BytesIO(file_data)
-        print("serve_multipart buffer")
+        #environ = io.BytesIO(event.body)
+        #environ = event.body
         if 'multipart/form-data' in content_type:
+            context.logger.info("serve multipart buffer")
+            environ = {
+                "wsgi.input": io.BytesIO(event.body),
+                "CONTENT_LENGTH": str(len(event.body)),
+                "CONTENT_TYPE": content_type,
+                "REQUEST_METHOD": "POST",
+            }            
             forms, files = parse_form_data(environ)
-            print("serve_multipart files")
+            context.logger.info("serve multipart files")
             for filed_name in files:
                 file_details = files[filed_name]
                 print(f"process file:{file_details.filename}")
@@ -194,7 +200,7 @@ def serve_multipart(context, event):
         
         return results
     except Exception as e:
-        print(f"serve_multipart error:{e}")
+        context.logger.error(f"serve_multipart error:{e}")
         return context.Response(body=f"Error:{e}", status_code=500)
 
 
