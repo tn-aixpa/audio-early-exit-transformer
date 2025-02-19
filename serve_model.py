@@ -192,7 +192,7 @@ def serve_multipart(context, event):
 
                 trasncript = serve_local(context.context_dict, filename)  
                 info = {}
-                info['filename'] = filename
+                info['filename'] = filed_name
                 info['trasncript'] = trasncript
                 results.append(info)
 
