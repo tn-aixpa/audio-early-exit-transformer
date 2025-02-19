@@ -185,11 +185,12 @@ def serve_multipart(context, event):
             context.logger.info("serve multipart files")
             for filed_name in files:
                 file_details = files[filed_name]
-                print(f"process file:{file_details.filename}")
+                context.logger.info(f"process file:{file_details.filename}")
                 filename = data_path + "/upload/" + id_generator() + "_" + file_details.filename
-                file_details.save_as(filename) 
+                file_details.save_as(filename)
+                context.logger.info(f"filename:{filename}") 
 
-                trasncript = serve_local(filename)  
+                trasncript = serve_local(context.context_dict, filename)  
                 info = {}
                 info['filename'] = filename
                 info['trasncript'] = trasncript
