@@ -28,9 +28,9 @@ def evaluate_batch_ctc(args, model, batch, valid_len, inf, vocab):
     best_combined = inf.ctc_predict_(encoder[len(encoder)-1], len(encoder)-1)
     #print(f"best_combined:{best_combined}")
     if args.bpe == True:
-        transcript = apply_lex(args.sp.decode(best_combined[0]).lower(), vocab)
+        transcript = apply_lex(args.sp.decode(best_combined[len(best_combined)-1]).lower(), vocab)
     else:
-        transcript = apply_lex(re.sub(r"[#^$]+", "", best_combined[0].lower()), vocab)
+        transcript = apply_lex(re.sub(r"[#^$]+", "", best_combined[len(best_combined)-1].lower()), vocab)
     return transcript
 
 
