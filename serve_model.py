@@ -26,7 +26,7 @@ def evaluate_batch_ctc(args, model, batch, valid_len, inf, vocab):
     #best_combined = inf.ctc_cuda_predict(encoder[len(encoder)-1], args.tokens)
     #for CPU
     best_combined = inf.ctc_predict_(encoder[len(encoder)-1], len(encoder)-1)
-    #print(f"best_combined:{best_combined}")
+    print(f"best_combined:{best_combined}")
     if args.bpe == True:
         transcript = apply_lex(args.sp.decode(best_combined[len(best_combined)-1]).lower(), vocab)
     else:
