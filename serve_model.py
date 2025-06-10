@@ -20,7 +20,7 @@ context_dict = {}
 
 data_path="/data"
 
-def evaluate_batch_ctc(args, model, batch, valid_len, inf, vocab):
+def evaluate_batch_ctc(args, model, batch, valid_len, inf):
     encoder = model(batch[0].to(args.device), valid_len)
     #print(f"encoder:{encoder}")
     best_combined = inf.ctc_cuda_predict(encoder[len(encoder)-1], args.tokens)
@@ -36,18 +36,17 @@ def evaluate_batch_ctc(args, model, batch, valid_len, inf, vocab):
     return transcript
 
 
-def run(args, model, data_loader, inf, vocab):
+def run(args, model, data_loader, inf):
     result = []
     for batch in data_loader:
         valid_len = batch[1]
         result.append(evaluate_batch_ctc(args, model, batch,
-                            valid_len,  inf, vocab))
+                            valid_len,  inf))
 
     return result
 
 
-def init(context, model_name="early-exit-model", lexicon="lexicon.lex",
-         sp_model="bpe-256.model", sp_lexicon="bpe-256.lex", sp_tokens="bpe-256.tok"):
+def init(context, model_name="early-exit-model", sp_model="bpe-256.model", sp_lexicon="bpe-256.lex", sp_tokens="bpe-256.tok"):
     try:
         os.mkdir(data_path + "/upload")
         context.logger.info("create dir data/upload")
@@ -91,10 +90,10 @@ def init(context, model_name="early-exit-model", lexicon="lexicon.lex",
     context_dict['model'] = model
 
     # load lexicon
-    lexicon_artifact = project.get_artifact(lexicon)    
-    lexicon_path = lexicon_artifact.download(destination=data_path + "/sentencepiece", overwrite=True)
-    vocab = load_dict(lexicon_path)
-    context_dict['vocab'] = vocab
+    #lexicon_artifact = project.get_artifact(lexicon)    
+    #lexicon_path = lexicon_artifact.download(destination=data_path + "/sentencepiece", overwrite=True)
+    #vocab = load_dict(lexicon_path)
+    #context_dict['vocab'] = vocab
 
     context.logger.info(f"init:{len(context_dict)}")
     
@@ -139,7 +138,7 @@ def serve_local(context_dict, path):
     data_loader = get_infer_data_loader(args=context_dict['args'], paths=paths)
 
     result = run(model=context_dict['model'], args=context_dict['args'], data_loader=data_loader,
-        inf=inf, vocab=context_dict['vocab'])
+        inf=inf)
     
     for num, transcript in enumerate(result):
         print(f"Transcript[{num}]:{transcript}")

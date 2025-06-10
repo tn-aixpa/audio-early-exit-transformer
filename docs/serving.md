@@ -24,12 +24,6 @@ project = dh.get_or_create_project("demo-early-exit-eng")
 )
 
 project.log_artifact(
-    name="lexicon.lex",
-    kind="artifact",
-    source="/home/user/upload/lexicon.lex"
-)
-
-project.log_artifact(
     name="bpe-256.model",
     kind="artifact",
     source="/home/user/upload/bpe-256.model"
@@ -71,7 +65,6 @@ run = func.run(
     resources = {"mem":{"requests": "2Gi",}},
     init_parameters = {
         "model_name":"early-exit-model",
-        "lexicon":"lexicon.lex",
         "sp_model":"bpe-256.model",
         "sp_lexicon":"bpe-256.lex",
         "sp_tokens":"bpe-256.tok"
