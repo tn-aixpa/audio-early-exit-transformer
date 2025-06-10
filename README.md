@@ -7,8 +7,5 @@ The final service exposes a REST API that allows to send one or more audio files
 ### Acknowledgements
 More information about the Early-Exit research project are available at https://github.com/SpeechTechLab/early-exit-transformer.git
 
-### Training
-[Traning a model](.docs/training.md)
-
 ### Serving
 [Serving a model](./docs/serving.md)
