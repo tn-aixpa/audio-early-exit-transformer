@@ -68,7 +68,7 @@ func = project.new_function(name="serve_function",
 run = func.run(
     action="serve",
     profile="1xa100",
-    resources = {"mem":{"requests": "1Gi",}},
+    resources = {"mem":{"requests": "2Gi",}},
     init_parameters = {
         "model_name":"early-exit-model",
         "lexicon":"lexicon.lex",
@@ -81,7 +81,7 @@ run = func.run(
             "volume_type": "persistent_volume_claim",
             "name": "early-exit-demo-serve",
             "mount_path": "/data",
-            "spec": { "size": "5Gi" }        
+            "spec": { "size": "1Gi" }        
         }
     ]
 )
