@@ -2,7 +2,7 @@
 In order to start the inference service, you shlould upload to the platform the required files.
 The files could be found on Hugginface
 - for English: https://huggingface.co/SpeechTek/English-EE-conformer/tree/main
-- for Italian: 
+- for Italian: https://huggingface.co/SpeechTek/Italian-EE-conformer/tree/main
 
 
 1. Initializing the project
