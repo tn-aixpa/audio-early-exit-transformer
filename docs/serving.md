@@ -45,7 +45,7 @@ project.log_artifact(
 
 3. Define a funtion that handle the serving process
 ```Python
-func = project.new_function(name="serve_function",
+func = project.new_function(name="serve-function",
                             kind="python",
                             python_version="PYTHON3_10",
                             code_src="git+https://github.com/tn-aixpa/audio-early-exit-transformer",
