@@ -18,7 +18,7 @@ project = dh.get_or_create_project("demo-early-exit-eng")
  project.log_model(
     name="early-exit-model",
     kind="model",
-    source="/home/user/upload/English-EE-conformer",
+    source="/home/user/upload/english-EE-conformer",
     algorithm="early-exit",
     framework="pythorch"
 )
@@ -51,7 +51,7 @@ func = project.new_function(name="serve-function",
                             code_src="git+https://github.com/tn-aixpa/audio-early-exit-transformer",
                             handler="serve_model:serve_multipart",
                             init_function="init",
-                            requirements=["torch==2.5.0", "torchaudio==2.5.0", "tensorboard==2.18.0",
+                            requirements=["torch==2.8.0", "torchaudio==2.8.0", "tensorboard==2.18.0",
                                 "flashlight==0.1.1", "flashlight-text==0.0.7", "sentencepiece==0.2.0",
                                 "soundfile==0.12.1", "editdistance==0.8.1", "multipart==1.2.1"])
 ```
