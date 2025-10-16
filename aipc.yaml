@@ -1,0 +1,29 @@
+ai: Audio
+domain: Generic
+usages: ./docs/usage.md
+metadata:
+  name: Early-Exit Transformer ASR Service template
+  description: >
+    A batch service for Automatic Speech Recognition (ASR) solution using the Early-Exit transformer architecture implementation.
+  kind: product-template
+  ai: Audio
+  domain: Generic
+  license: Apache License 2.0
+
+usage: ./docs/usage.md
+howto:
+  - title: expose the model as a service
+    ref: ./docs/howto/serving.md
+operations:
+  - id: serving
+    name: Expose ASR batch service
+    kind: service
+    task: audio
+    implementation:
+      framework: aixpa
+      spec:
+        kind: python
+        code_src: "git+https://github.com/tn-aixpa/audio-early-exit-transformer"
+        handler: "serve_model:serve_multipart"
+        init_function: "init"
+        requirements: ["torch==2.8.0", "torchaudio==2.8.0", "tensorboard==2.18.0", "flashlight==0.1.1", "flashlight-text==0.0.7", "sentencepiece==0.2.0", "soundfile==0.12.1", "editdistance==0.8.1", "multipart==1.2.1"]
